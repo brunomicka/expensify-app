@@ -18,11 +18,11 @@ exports[`should render ExpenseListItem with an expense 1`] = `
     <strong>
       Amount:
     </strong>
-    $1,095.00
+    $ 1,095.00
   </p>
   <p>
     <strong>
-      Create At:
+      Created At:
     </strong>
     December 27th, 1969
   </p>
