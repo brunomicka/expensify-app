@@ -147,7 +147,6 @@ test('should remove expense from firebase', (done) => {
 test('should edit expense from firebase', (done) => {
     const store = createMockStore({});
     const updates = {
-        ...expenses[1],
         description: 'updated'
     };
     const id = expenses[1].id;
@@ -162,7 +161,7 @@ test('should edit expense from firebase', (done) => {
         return database.ref(`expenses/${actions[0].id}`).once('value');
 
     }).then((snapshot) => {
-        expect(snapshot.val()).toEqual({id, ...updates});
+        expect(snapshot.val().description).toBe(updates.description);
         done();
     });
 });
