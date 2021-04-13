@@ -1,6 +1,14 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { startAddExpense, addExpense, editExpense, removeExpense, setExpenses, startSetExpenses } from '../../src/actions/expenses';
+import {
+    startAddExpense,
+    addExpense,
+    editExpense,
+    removeExpense,
+    setExpenses,
+    startSetExpenses,
+    startRemoveExpense
+} from '../../src/actions/expenses';
 import expenses from '../fixtures/expenses';
 import database from '../../src/firebase/firebase';
 
@@ -12,7 +20,7 @@ beforeEach((done) => {
     expenses.forEach(({ id, description, note, amount, createdAt }) => {
         expenseData[id] = { description, note, amount, createdAt };
     });
-    database.ref('expenses').set(expenseData).then(()=> done());
+    database.ref('expenses').set(expenseData).then(() => done());
 });
 
 test('should setup remove expense action object', () => {
@@ -94,15 +102,15 @@ test('should add expense with defaults to database and store', () => {
     }).then((snapshot) => {
         expect(snapshot.val()).toEqual(defaultExpense);
         done();
-    });;
+    });
 });
 
 test('should setup set expense action object with data', () => {
-   const action = setExpenses(expenses);
-   expect(action).toEqual({
-       type: 'SET_EXPENSES',
-       expenses
-   });
+    const action = setExpenses(expenses);
+    expect(action).toEqual({
+        type: 'SET_EXPENSES',
+        expenses
+    });
 });
 
 test('should fetch the expenses from firebase', (done) => {
@@ -116,5 +124,24 @@ test('should fetch the expenses from firebase', (done) => {
         done();
     });
 });
+
+test('should remove expense from firebase', (done) => {
+    const store = createMockStore({});
+
+    store.dispatch(startRemoveExpense({ id: expenses[1].id })).then(() => {
+        const actions = store.getActions();
+        expect(actions[0]).toEqual({
+            type: 'REMOVE_EXPENSE',
+            id: expenses[1].id
+        });
+
+        return database.ref(`expenses/${actions[0].id}`).once('value');
+
+    }).then((snapshot) => {
+        expect(snapshot.val()).toBeFalsy();
+        done();
+    });
+});
+
 
 
