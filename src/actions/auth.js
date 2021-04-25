@@ -1,6 +1,6 @@
-import { firebase, googleAuthProvider, twitterAuthProvider } from '../firebase/firebase';
+import { facebookAuthProvider, firebase, googleAuthProvider, twitterAuthProvider, firebaseAuth } from '../firebase/firebase';
 
-export const login = (uid)=> ({
+export const login = (uid) => ({
     type: 'LOGIN',
     uid
 });
@@ -17,7 +17,19 @@ export const startLoginTwitter = () => {
     }
 };
 
-export const logout = ()=> ({
+export const startLoginFacebook = () => {
+    return () => {
+        return firebase.auth().signInWithPopup(facebookAuthProvider);
+    }
+};
+
+export const startLoginWithPassword = (email) => {
+    return () => {
+        return firebaseAuth.fetchSignInMethodsForEmail(email);
+    }
+}
+
+export const logout = () => ({
     type: 'LOGOUT'
 });
 
